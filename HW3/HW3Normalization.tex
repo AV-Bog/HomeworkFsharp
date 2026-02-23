@@ -1,0 +1,38 @@
+% !TEX program = xelatex
+% NOTE: Для корректного Unicode используйте XeLaTeX (или LuaLaTeX).
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{CMU Serif}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz-cd}
+\usepackage{multicol}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\begin{document}
+
+\section*{Нормализация лямбда терма}
+
+\textbf{Исходный терм:}
+\[
+  ((\lambda a. (\lambda b. b\ b)\ (\lambda b. b\ b))\ b)\ ((\lambda c. (c\ b))\ (\lambda a. a))
+\]
+
+\textbf{Вычисление:}
+\begin{align*}
+  & ((\lambda a. (\lambda b. b\ b)\ (\lambda b. b\ b))\ b)\ ((\lambda c. (c\ b))\ (\lambda a. a)) \\
+  \rightarrow_\beta\ 
+  & ((\lambda b. b\ b)\ (\lambda b. b\ b))\ ((\lambda c. (c\ b))\ (\lambda a. a)) 
+    && \\
+  \rightarrow_\beta\ 
+  & ((\lambda b. b\ b)\ (\lambda b. b\ b))\ ((\lambda a. a)\ b) 
+    &&  \\
+  \rightarrow_\beta\ 
+  & ((\lambda b. b\ b)\ (\lambda b. b\ b))\ b 
+    && 
+\end{align*}
+
+\end{document}
