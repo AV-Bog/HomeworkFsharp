@@ -55,4 +55,3 @@ module Interpreter =
                 if next = current then Some current
                 else loop next (step + 1)    
         loop term 0
-    
