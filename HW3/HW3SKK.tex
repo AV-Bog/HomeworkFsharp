@@ -1,0 +1,33 @@
+% !TEX program = xelatex
+% NOTE: Для корректного Unicode используйте XeLaTeX (или LuaLaTeX).
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{CMU Serif}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\begin{document}
+
+\section*{Доказательство: S K K = I}
+
+\textbf{Определения:}
+\[
+  S = \lambda x. \lambda y. \lambda z. x\ z\ (y\ z), \quad
+  K = \lambda x. \lambda y. x, \quad
+  I = \lambda x. x
+\]
+\textbf{Вычисление:}
+\begin{align*}
+  S\ K\ K 
+  & = (\lambda x. \lambda y. \lambda z. x\ z\ (y\ z))\ K\ K \\
+  \rightarrow_\beta\ & (\lambda y. \lambda z. K\ z\ (y\ z))\ K \\
+  \rightarrow_\beta\ & \lambda z. K\ z\ (K\ z) \\
+  \rightarrow_\beta\ & \lambda z. (\lambda y. z)\ (K\ z) 
+    && \text{(так как } K\ z \rightarrow_\beta \lambda y. z) \\
+  \rightarrow_\beta\ & \lambda z. z \\
+  =\ & I
+\end{align*}
+\end{document}
