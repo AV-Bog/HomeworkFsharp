@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HW4Point-free", "HW4Point-free\HW4Point-free.fsproj", "{930C6089-0AF5-484E-89AE-4CF328669174}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests\Tests.fsproj", "{FE853923-0F9A-4594-8E2C-AC9FCBE8D8C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{930C6089-0AF5-484E-89AE-4CF328669174}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{930C6089-0AF5-484E-89AE-4CF328669174}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{930C6089-0AF5-484E-89AE-4CF328669174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE853923-0F9A-4594-8E2C-AC9FCBE8D8C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE853923-0F9A-4594-8E2C-AC9FCBE8D8C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE853923-0F9A-4594-8E2C-AC9FCBE8D8C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE853923-0F9A-4594-8E2C-AC9FCBE8D8C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
