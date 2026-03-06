@@ -30,6 +30,6 @@ module Staples =
                         false
             | _ -> checkStack stack rest
     
-    let okStaples (str : string) =
+    let public okStaples (str : string) =
         let bracketsOnly = onlyStaples str
         checkStack [] bracketsOnly
