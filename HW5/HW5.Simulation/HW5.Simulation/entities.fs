@@ -44,7 +44,7 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
     member private n.GetCompById(id: int) : Comp =
         computers |> Array.find (fun c -> c.Id = id)
     
-    member private n.GetNeighbors(id: int) int list =
+    member private n.GetNeighbors(id: int) : int list =
         [0 .. computers.Length - 1] |> List.filter( fun i -> matrix[id, i])
         
     member private n.TryInfectComp(id: int) bool =
@@ -65,4 +65,60 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
         compPationt.Infect() |> ignore
         countTurn <- 0
         currentInfect <- [pationtZeroId]
+    
+    member private n.PrintNetwork()=
+        for computer in computers do
+            printfn "  %s" (computer.ToString())
+            
+    member this.GetInfectedCount() =
+        currentInfect.Length
         
+    member n.RunSimulation() =
+        printfn "=== ЗАПУСК СИМУЛЯЦИИ ВИРУСА: %s ===" virus.Name
+        printfn "Начальное состояние сети:"
+        n.PrintNetwork()
+        printfn ""
+        
+        while true do
+            countTurn <- countTurn + 1
+            newInfect <- []
+            
+            let infectedToProcess = List.rev currentInfect
+            
+            for infComp in infectedToProcess do
+                let neighbors = n.GetNeighbors(infComp)
+                for neighbore in neighbors do
+                    let compNeighbore = n.GetCompById(neighbore)
+                    if not compNeighbore.IsInfected then
+                        let probubility = virus.GetInfectionProbability(compNeighbore.Os)
+                        let rool = rgn.NextDouble()
+                        if rool < probubility then
+                            newInfect <- neighbore :: newInfect
+            
+            let actualNewnInfect =
+                newInfect |> List.filter(fun id ->
+                    let computer = n.GetCompById(id)
+                    computer.Infect())
+            
+            printfn "=== ХОД %d ===" countTurn
+            
+            if actualNewnInfect.IsEmpty then
+                printfn "Новых заражений нет."
+                printfn "Симуляция завершена."
+                printfn ""
+                printfn "Итоговое состояние сети:"
+                n.PrintNetwork()
+                printfn ""
+                printfn "Всего ходов: %d" countTurn
+                printfn "Всего заражено компьютеров: %d" currentInfect.Length
+            else
+                printfn "Заразились в этом ходу: %s" 
+                    (actualNewnInfect |> List.map (fun id -> sprintf "PC-%d" id) |> String.concat ", ")
+                
+                currentInfect <- List.append currentInfect actualNewnInfect
+                
+                printfn "Текущее состояние сети:"
+                n.PrintNetwork()
+                printfn ""
+                
+                
