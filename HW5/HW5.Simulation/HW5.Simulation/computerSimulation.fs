@@ -1,4 +1,4 @@
-module HW5.Simulation.entities
+module computerSimulation
 
 open System
 
@@ -9,7 +9,7 @@ type Comp (id: int, os: OS) =
     
     member val Id = id with get
     member val Os = os with get
-    member val IsInfected = isInfected with get
+    member c.IsInfected = isInfected
     
     member c.Infect() =
         if not isInfected then
@@ -60,7 +60,7 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
             else
                 false
     
-    member private n.InitializePatintZero(pationtZeroId : int) =
+    member n.InitializePatintZero(pationtZeroId : int) =
         let compPationt = n.GetCompById(pationtZeroId)
         compPationt.Infect() |> ignore
         countTurn <- 0
@@ -79,7 +79,9 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
         n.PrintNetwork()
         printfn ""
         
-        while true do
+        let mutable flag = false
+        
+        while not flag do
             countTurn <- countTurn + 1
             newInfect <- []
             
@@ -111,6 +113,7 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
                 printfn ""
                 printfn "Всего ходов: %d" countTurn
                 printfn "Всего заражено компьютеров: %d" currentInfect.Length
+                flag <- true
             else
                 printfn "Заразились в этом ходу: %s" 
                     (actualNewnInfect |> List.map (fun id -> sprintf "PC-%d" id) |> String.concat ", ")
