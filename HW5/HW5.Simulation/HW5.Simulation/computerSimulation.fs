@@ -1,4 +1,4 @@
-module computerSimulation
+namespace HW5.Simulatoin
 
 type OS = Windows | Linux | MacOS
 
