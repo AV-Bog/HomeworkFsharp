@@ -21,6 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="HW5/HW5.Simulation/HW5.Simulation/HW5.Simulation.fsproj" />
+        <ProjectReference Include="..\..\HW5.Simulation\HW5.Simulation\HW5.Simulation.fsproj"/>
     </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿open System
-open HW5.Simulatoin
+open HW5.Simulation
 
 [<EntryPoint>]
 let main argv =

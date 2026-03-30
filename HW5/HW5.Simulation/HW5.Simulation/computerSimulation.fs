@@ -1,4 +1,4 @@
-namespace HW5.Simulatoin
+namespace HW5.Simulation 
 
 type OS = Windows | Linux | MacOS
 
