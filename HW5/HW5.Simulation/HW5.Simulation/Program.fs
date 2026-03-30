@@ -27,8 +27,11 @@ let main argv =
         (OS.MacOS, 0.5)
     ]
     let virus = Virus("WannaCry", virusProbabilities)
-    
-    let network = Network(computers, adjacencyMatrix, virus)
+    let rgn = Random()
+    let random = fun () -> rgn.NextDouble()
+    let log = fun (msg: string) -> printfn "%s" msg
+        
+    let network = Network(computers, adjacencyMatrix, virus, log, random)
     
     network.InitializePatintZero(2)
     

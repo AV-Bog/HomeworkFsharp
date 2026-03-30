@@ -1,7 +1,5 @@
 module computerSimulation
 
-open System
-
 type OS = Windows | Linux | MacOS
 
 type Comp (id: int, os: OS) =
@@ -35,11 +33,16 @@ type Virus (name : string, probabilities: Map<OS,float>) =
     override this.ToString() =
         sprintf "Virus '%s'" this.Name
 
-type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
+type SimulationResult = {
+    TotalTurns: int
+    TotalInfected: int
+    Logs: string list 
+}
+    
+type Network (computers: Comp[], matrix: bool[,], virus: Virus, log: string -> unit, random: unit -> float) =
     let mutable currentInfect: int list = []
     let mutable newInfect: int list = []
     let mutable countTurn = 0
-    let rgn = Random()
     
     member private n.GetCompById(id: int) : Comp =
         computers |> Array.find (fun c -> c.Id = id)
@@ -53,7 +56,7 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
             false
         else
             let probability = virus.GetInfectionProbability(comp.Os)
-            let roll = rgn.NextDouble()
+            let roll = random()
             if roll < probability then
                 comp.Infect() |> ignore
                 true
@@ -66,18 +69,17 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
         countTurn <- 0
         currentInfect <- [pationtZeroId]
     
-    member private n.PrintNetwork()=
+    member private n.SprintNetwork()=
         for computer in computers do
-            printfn "  %s" (computer.ToString())
+            log (sprintf "  %s" (computer.ToString()))
             
     member this.GetInfectedCount() =
         currentInfect.Length
         
     member n.RunSimulation() =
-        printfn "=== ЗАПУСК СИМУЛЯЦИИ ВИРУСА: %s ===" virus.Name
-        printfn "Начальное состояние сети:"
-        n.PrintNetwork()
-        printfn ""
+        log (sprintf "=== ЗАПУСК СИМУЛЯЦИИ ВИРУСА: %s ===" virus.Name)
+        log "Начальное состояние сети:"
+        n.SprintNetwork()
         
         let mutable flag = false
         
@@ -93,7 +95,7 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
                     let compNeighbore = n.GetCompById(neighbore)
                     if not compNeighbore.IsInfected then
                         let probubility = virus.GetInfectionProbability(compNeighbore.Os)
-                        let rool = rgn.NextDouble()
+                        let rool = random()
                         if rool < probubility then
                             newInfect <- neighbore :: newInfect
             
@@ -102,26 +104,26 @@ type Network (computers: Comp[], matrix: bool[,], virus: Virus) =
                     let computer = n.GetCompById(id)
                     computer.Infect())
             
-            printfn "=== ХОД %d ===" countTurn
+            log (sprintf "=== ХОД %d ===" countTurn)
             
             if actualNewnInfect.IsEmpty then
-                printfn "Новых заражений нет."
-                printfn "Симуляция завершена."
-                printfn ""
-                printfn "Итоговое состояние сети:"
-                n.PrintNetwork()
-                printfn ""
-                printfn "Всего ходов: %d" countTurn
-                printfn "Всего заражено компьютеров: %d" currentInfect.Length
+                log "Новых заражений нет."
+                log "Симуляция завершена."
+                log "Итоговое состояние сети:"
+                n.SprintNetwork()
+                log (sprintf "Всего ходов: %d" countTurn)
+                log (sprintf "Всего заражено компьютеров: %d" currentInfect.Length)
                 flag <- true
             else
-                printfn "Заразились в этом ходу: %s" 
-                    (actualNewnInfect |> List.map (fun id -> sprintf "PC-%d" id) |> String.concat ", ")
+                log (sprintf "Заразились в этом ходу: %s" 
+                    (actualNewnInfect |> List.map (fun id -> sprintf "PC-%d" id) |> String.concat ", "))
                 
                 currentInfect <- List.append currentInfect actualNewnInfect
                 
-                printfn "Текущее состояние сети:"
-                n.PrintNetwork()
-                printfn ""
-                
-                
+                log "Текущее состояние сети:"
+                n.SprintNetwork()
+        {
+            TotalTurns = countTurn
+            TotalInfected = currentInfect.Length
+            Logs = []
+        }        
