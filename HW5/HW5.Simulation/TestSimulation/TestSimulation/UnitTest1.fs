@@ -41,7 +41,7 @@ type NetworkSimulationTests () =
         Assert.That(comp2.IsInfected, Is.True, "!?")
         Assert.That(comp3.IsInfected, Is.True, "!?")
         
-        Assert.That(result.TotalTurns = 3, Is.True, "Должно быть 3 хода для линии из 4 узлов")
+        Assert.That(result.TotalTurns = 4, Is.True, "Должно быть 4 хода для линии из 4 узлов с учетом того что 1а из итераций это проверка на отсутствие изменений")
     
     [<Test>]
     member this.Test_With_Probability_0_NoOne_Gets_Infected () =
