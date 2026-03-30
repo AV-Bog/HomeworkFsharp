@@ -44,7 +44,7 @@ type NetworkSimulationTests () =
         Assert.That(result.TotalTurns = 3, Is.True, "Должно быть 3 хода для линии из 4 узлов")
     
     [<Test>]
-    member this.``Test_With_Probability_0_NoOne_Gets_Infected`` () =
+    member this.Test_With_Probability_0_NoOne_Gets_Infected () =
         let comp0 = Comp(0, Linux)
         let comp1 = Comp(1, Linux)
         let comp2 = Comp(2, Linux)
