@@ -30,7 +30,7 @@ type NetworkSimulationTests () =
         let deterministicRandom = fun () -> 0.5
         
         let network = Network(computers, matrix, virus, testLogger, deterministicRandom)
-        network.InitializePatientZero(0)
+        network.InitializePatintZero(0)
         
         let result = network.RunSimulation()
         
@@ -64,7 +64,7 @@ type NetworkSimulationTests () =
         let deterministicRandom = fun () -> 0.1
         
         let network = Network(computers, matrix, virus, testLogger, deterministicRandom)
-        network.InitializePatientZero(0)
+        network.InitializePatintZero(0)
         
         let result = network.RunSimulation()
         
@@ -96,7 +96,7 @@ type NetworkSimulationTests () =
         let randomWillInfect = fun () -> 0.3
         
         let network1 = Network(computers, matrix, virus, testLogger, randomWillInfect)
-        network1.InitializePatientZero(0)
+        network1.InitializePatintZero(0)
         let result1 = network1.RunSimulation()
         
         Assert.That(result1.TotalInfected = 2, Is.True, "При random=0.3 (< 0.5) оба компьютера должны заразиться")
@@ -111,7 +111,7 @@ type NetworkSimulationTests () =
         let randomWontInfect = fun () -> 0.7
         
         let network2 = Network(computers2, matrix, virus, testLogger, randomWontInfect)
-        network2.InitializePatientZero(0)
+        network2.InitializePatintZero(0)
         let result2 = network2.RunSimulation()
         
         Assert.That(result2.TotalInfected = 1, Is.True, "При random=0.7 (> 0.5) только patient zero должен заразиться")
