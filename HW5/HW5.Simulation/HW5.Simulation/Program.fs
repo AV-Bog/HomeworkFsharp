@@ -34,8 +34,9 @@ let main argv =
     let network = Network(computers, adjacencyMatrix, virus, log, random)
     
     network.InitializePatintZero(2)
-    
-    network.RunSimulation()
+
+    let result = network.RunSimulation()
+    printfn "%A" result
     
     printfn "\nНажмите любую клавишу для выхода..."
     Console.ReadKey() |> ignore

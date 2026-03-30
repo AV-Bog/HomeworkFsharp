@@ -2,7 +2,7 @@
 
 open NUnit.Framework
 
-open HW5.Simulatoin
+open HW5.Simulation
 
 [<TestFixture>]
 type NetworkSimulationTests () =
