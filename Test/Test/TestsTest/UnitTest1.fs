@@ -1,4 +1,8 @@
-﻿module Test.TestsTest
+﻿// <copyright file="UnitTest1.fs" author="bogdanovaarina">
+// under MIT License
+// </copyright>
+
+module Test.TestsTest
 
 open NUnit.Framework
 open task1
