@@ -23,9 +23,8 @@ let firstOccurrence x list =
     let rec recFirst acc list =
         match list with
         | [] -> None
-        | head :: tail ->
-            | head :: _ when head = x -> Some acc
-            | _ :: tail -> recFirst (acc+1) tail
+        | head :: tail when head = x -> Some acc
+        | _ :: tail -> recFirst (acc + 1) tail
     recFirst 0 list
 
 let reverse list =
