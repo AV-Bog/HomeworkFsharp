@@ -9,68 +9,77 @@ module Functions =
         if n < 2 then false
         else check 2
     
-    let primeNumbers ()=
-        let rec loop a =
-            if isPrime a then
-                seq {
-                    yield a
-                    yield! loop (a + 1)
-                }
-            else
-                loop (a + 1)
-        loop 2
+    let primeNumbers () =
+        Seq.initInfinite (fun i -> i + 2)
+        |> Seq.filter isPrime
 
+    type BinaryOp =
+        | Add
+        | Subtract
+        | Multiply
+        | Divide
+        | Power
+        | Modulo
+    
+    type UnaryOp =
+        | Sqrt
+        | Abs
+        | Sin
+        | Cos
+    
     type Expression =
         | Number of float
-        | BinarOp of op: string * left: Expression * right: Expression
-        | UnoOp of op: string * operand: Expression
-        
-    let rec evaluate (exp : Expression) =
-        match exp with
-        | Number a -> a
-        | BinarOp (op, left, right) ->
-            let leftVal = evaluate left
-            let rightVal = evaluate right
-            
-            match op with
-            |"+" -> leftVal + rightVal
-            | "-" -> leftVal - rightVal
-            | "*" -> leftVal * rightVal
-            | "/" -> 
-                if rightVal = 0.0 then
-                    failwith "Деление на ноль!"
-                else
-                    leftVal / rightVal
-            | "^" -> pown leftVal (int rightVal)
-            | "%" -> leftVal % rightVal
-            | _ -> failwith $"Неизвестная операция: {op}"
-        | UnoOp (op, operand) ->
-            let operandVal = evaluate operand
-            
-            match op with
-            | "sqrt" -> sqrt operandVal
-            | "abs" -> abs operandVal
-            | "sin" -> sin operandVal
-            | "cos" -> cos operandVal
-            | _ -> failwith $"Неизвестная унарная операция: {op}"
-
+        | Binary of BinaryOp * Expression * Expression
+        | Unary of UnaryOp * Expression
+    
+    let evaluate (exp : Expression) =
+        let rec eval exp =
+            match exp with
+            | Number a -> a
+            | Binary (op, left, right) ->
+                let leftVal = eval left
+                let rightVal = eval right
+                
+                match op with
+                | Add -> leftVal + rightVal
+                | Subtract -> leftVal - rightVal
+                | Multiply -> leftVal * rightVal
+                | Divide when rightVal = 0.0 -> failwith "Деление на ноль!"
+                | Divide -> leftVal / rightVal
+                | Power -> pown leftVal (int rightVal)
+                | Modulo -> leftVal % rightVal
+            | Unary (op, operand) ->
+                let operandVal = eval operand
+                
+                match op with
+                | Sqrt -> sqrt operandVal
+                | Abs -> abs operandVal
+                | Sin -> sin operandVal
+                | Cos -> cos operandVal
+        eval exp
     
     type BinTree<'T> =
-       | Empty
-       | Node of value: 'T * leftSon: BinTree<'T> * rightSon: BinTree<'T>
+        | Empty
+        | Node of value: 'T * leftSon: BinTree<'T> * rightSon: BinTree<'T>
     
-    let rec mapForFree tree func =
-            match tree with
-            | Empty -> Empty
-            | Node(value, leftSon, rightSon) ->
-                Node(func value, mapForFree leftSon func, mapForFree rightSon func)
-            
-            
-    let countEvensFilter number =
-        number |> List.filter (fun x -> x % 2 = 0) |> List.length
+    let rec treeMap tree func =
+        match tree with
+        | Empty -> Empty
+        | Node(value, leftSon, rightSon) ->
+            Node(func value, treeMap leftSon func, treeMap rightSon func)
+        
+    let rec areTreesEqual tree1 tree2 =
+        match tree1, tree2 with
+        | Empty, Empty -> true
+        | Node(v1, l1, r1), Node(v2, l2, r2) ->
+            v1 = v2 && areTreesEqual l1 l2 && areTreesEqual r1 r2
+        | _ -> false
+    
+    let countEvensFilter numbers =
+        numbers |> List.filter (fun x -> x % 2 = 0) |> List.length
     
     let countEvensMap number =
-        number |> List.map (fun x -> if x%2 = 0 then 1 else 0) |> List.sum
+        number |> List.map (fun x -> if x % 2 = 0 then 1 else 0) |> List.sum
         
     let countEvensFold number =
         number |> List.fold (fun acc x -> if x % 2 = 0 then (acc + 1) else acc) 0
