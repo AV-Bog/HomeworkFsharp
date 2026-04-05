@@ -14,7 +14,7 @@ let extractLinks (html: string) =
     let pattern = @"<a\s+href=[""'](http://[^""']*)[""']"
     Regex.Matches(html, pattern)
     |> Seq.cast<Match>
-    |> Seq.map (fun m -> m.Groups.[1].Value)
+    |> Seq.map (fun m -> m.Groups[1].Value)
     |> Seq.distinct
     |> Seq.toList
 
