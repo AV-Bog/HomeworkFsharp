@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="UnitTest1.fs"/>
+        <Compile Include="UnitTest.fs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MiniCrawler\MiniCrawler.fsproj" />
+        <ProjectReference Include="..\MiniCrawler\MiniCrawler.fsproj"/>
     </ItemGroup>
 
 </Project>
