@@ -16,7 +16,7 @@ let generatePowersOfTwo n m =
             let newAcc = if count = 0 then acc else acc * 2.0
             loop newAcc (count + 1) (newAcc :: result)
     
-    let startValue = 2.0 * n
+    let startValue = 2.0 ** float n
     loop startValue 0 []
 
 let firstOccurrence x list =

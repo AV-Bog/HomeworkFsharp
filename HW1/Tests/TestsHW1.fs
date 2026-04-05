@@ -14,13 +14,25 @@ let ``Factorial of 20 should be large number`` () =
 
 
 [<Test>]
-let ``nmFunction 0 0 should return single element`` () =
-    nmFunction 0 0 |> should equal [1I]
+let ``generatePowersOfTwo 0 0 should return single element`` () =
+    generatePowersOfTwo 0 0 |> should equal [1.0]
 
 [<Test>]
-let ``nmFunction 0 5 should start from 1`` () =
-    nmFunction 0 5 |> should equal [1I; 2I; 4I; 8I; 16I; 32I]
+let ``generatePowersOfTwo 0 5 should start from 1`` () =
+    generatePowersOfTwo 0 5 |> should equal [1.0; 2.0; 4.0; 8.0; 16.0; 32.0]
 
+[<Test>]
+let ``generatePowersOfTwo 3 4 should return powers from 8 to 128`` () =
+    generatePowersOfTwo 3 4 |> should equal [8.0; 16.0; 32.0; 64.0; 128.0]
+
+[<Test>]
+let ``generatePowersOfTwo 1 0 should return single element 2`` () =
+    generatePowersOfTwo 1 0 |> should equal [2.0]
+
+[<Test>]
+let ``generatePowersOfTwo -1 3 should handle negative n`` () =
+    generatePowersOfTwo -1 3 |> should equal [0.5; 1.0; 2.0; 4.0]
+    
 [<Test>]
 let ``firstOccurrence in empty list should be None`` () =
     firstOccurrence 5 [] |> should equal None
