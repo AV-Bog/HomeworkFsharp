@@ -17,19 +17,21 @@ module Interpreter =
     
     let rec subst t x replacement =
         match t with
-        | Var y -> if x = y then replacement else t
+        | Var y when x = y -> replacement
+        | Var _ -> t
         | App (t1, t2) -> App (subst t1 x replacement, subst t2 x replacement)
+        | Abs (y, _) when x = y -> t
+        | Abs (y, body) when not (Set.contains x (freeVars body)) -> Abs (y, body)
         | Abs (y, body) ->
-            if y = x then t
+            let fvReplacement = freeVars replacement
+            if Set.contains y fvReplacement then
+                let used = Set.union (freeVars body) fvReplacement
+                let z = freshName y used
+                let renamedBody = subst body y (Var z)
+                Abs (z, subst renamedBody x replacement)
             else
-                if Set.contains y (freeVars replacement) then
-                    let used = Set.union (freeVars body) (freeVars replacement)
-                    let z = freshName y used
-                    let renamedBody = subst body y (Var z)
-                    Abs (z, subst renamedBody x replacement)
-                else
-                    Abs (y, subst body x replacement)
-    
+                Abs (y, subst body x replacement)
+
     let rec reduce = function
         | App (Abs (x, body), arg) -> subst body x arg
         | App (f, n) ->
@@ -38,16 +40,13 @@ module Interpreter =
                 App (f', n)
             else
                 let n' = reduce n
-                if n' <> n then App (f, n')
-                else App (f, n)
+                App (f, n')
         | Abs (x, body) ->
             let body' = reduce body
-            if body' <> body then Abs (x, body')
-            else Abs (x, body)
+            Abs (x, body')
         | v -> v
     
-    let normalize term=
-        let maxSteps = 1000
+    let normalize maxSteps term=
         let rec loop current step =
             if step >= maxSteps then None
             else
