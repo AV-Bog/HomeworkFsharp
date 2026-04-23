@@ -22,14 +22,18 @@ type BlockingQueue<'T>() =
             queue.Dequeue()
     
     // Попытка получить элемент с таймаутом
-    member this.TryDequeue(timeoutMilliseconds: int) =
+    member this.TryDequeue(timeoutMilliseconds: int) : 'T option =
+        if timeoutMilliseconds < -1 then
+            invalidArg (nameof(timeoutMilliseconds)) "Таймаут не может быть меньше -1"
+
         lock syncRoot <| fun () ->
-            if queue.Count = 0 then
-                Monitor.Wait(syncRoot, timeoutMilliseconds) |> ignore
-            if queue.Count > 0 then
-                Some(queue.Dequeue())
-            else
-                None
+            match queue.Count with
+            | 0 ->
+                match Monitor.Wait(syncRoot, timeoutMilliseconds) with
+                | true when queue.Count > 0 -> Some(queue.Dequeue())
+                | true -> None
+                | false -> None
+            | _ -> Some(queue.Dequeue())
     
     // Получить текущий размер очереди
     member this.Count =
@@ -37,4 +41,10 @@ type BlockingQueue<'T>() =
     
     // Очистить очередь
     member this.Clear() =
-        lock syncRoot <| fun () -> queue.Clear()
+        lock syncRoot <| fun () -> 
+            queue.Clear()
+            Monitor.PulseAll(syncRoot)
+    
+    // Проверка, пуста ли очередь
+    member this.IsEmpty =
+        lock syncRoot <| fun () -> queue.Count = 0
