@@ -1,0 +1,45 @@
+% !TEX program = xelatex
+% NOTE: Для корректного Unicode используйте XeLaTeX (или LuaLaTeX).
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{CMU Serif}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1\baselineskip}
+
+\begin{document}
+\subsection*{Факторизованная однозначная грамматика без эпсилон-переходов}
+
+\begin{verbatim}
+Term ::= App
+    | Abs
+
+App ::= Term' {Term'}
+
+Term' ::= Abs
+    | Var
+    | (Term)
+
+Abs ::= \ Var . Term
+
+Var ::= [a..z]
+\end{verbatim}
+
+\subsection*{Примеры вывода}
+
+\textbf{Пример 1:} вывод \texttt{x y} - аппликации переменной к переменной
+
+\begin{verbatim}
+Term => App => Term' Term' => Var Term' => x Var => x y
+\end{verbatim}
+
+\textbf{Пример 2:} вывод \texttt{\textbackslash x . x y} - абстракции, применённой к y
+
+\begin{verbatim}
+Term => Abs => \ Var . Term => \ x . Term => \ x . App => \ x . Term' Term' => \ x . Var Term' => \ x . x Var => \ x . x y
+\end{verbatim}
+
+
+\end{document}
