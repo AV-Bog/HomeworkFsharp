@@ -3,6 +3,7 @@
 // </copyright>
 
 module Parser.Parser
+open System
 open FParsec
 
 type Term =
@@ -19,7 +20,7 @@ let ws = spaces
 let str s = pstring s .>> ws
 
 let identifier : Parser<string, unit> =
-    let isFirstChar c = isLetter c && System.Char.IsLower(c)
+    let isFirstChar c = isLetter c && Char.IsLower(c)
     let isOtherChar c = isLetter c || isDigit c
     (many1Satisfy2L isFirstChar isOtherChar "identifier") .>> ws
 
@@ -47,44 +48,46 @@ let app : Parser<Term, unit> =
 
 do termRef.Value <- app
 
-let letDefinition : Parser<string * Term, unit> =
-    str "let" >>. identifier .>> str "=" .>>. term .>> restOfLine true |>> (fun (name, value) -> (name, value))
+let letDefinition : Parser<Definition, unit> =
+    str "let" >>. identifier .>> str "=" .>>. term
+    |>> (fun (name, value) -> { Name = name; Body = value })
 
-let parseInput (input: string) : ReplyStatus =
-    let lines = input.Split([|'\n'; '\r'|], System.StringSplitOptions.RemoveEmptyEntries)
+type ParseResult = {
+    Definitions: Map<string, Term>
+    MainExpression: Term
+}
+
+let parseInput (input: string) : ParseResult option =
+    let lines = input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
     let definitions = ref Map.empty
     let mutable mainExpr = None
-    let mutable error = None
+    let mutable errorMsg = None
     
     for line in lines do
-        if error.IsNone then
+        if errorMsg.IsNone then
             let trimmed = line.Trim()
             if trimmed <> "" then
                 match run (letDefinition .>> ws .>> eof) trimmed with
-                | Success((name, value), _, _) ->
-                    definitions.Value <- Map.add name value definitions.Value
+                | Success(def, _, _) ->
+                    definitions.Value <- Map.add def.Name def.Body definitions.Value
                 | _ ->
                     match run (term .>> ws .>> eof) trimmed with
                     | Success(expr, _, _) ->
                         if mainExpr.IsNone then
                             mainExpr <- Some expr
                         else
-                            error <- Some "Несколько основных выражений"
+                            errorMsg <- Some "Несколько основных выражений"
                     | Failure(err, _, _) ->
-                        error <- Some $"Ошибка парсинга: {err}"
+                        errorMsg <- Some $"Ошибка парсинга: {err}"
     
-    match error with
-    | Some msg -> Error
+    match errorMsg with
+    | Some msg -> 
+        printfn "%s" msg
+        None
     | None ->
         match mainExpr with
-        | Some expr -> Ok
-        | None -> Error
-        
-let rec substituteDefinitions term definitions =
-    match term with
-    | Var name ->
-        match Map.tryFind name definitions with
-        | Some defTerm -> defTerm
-        | None -> Var name
-    | Abs (params, body) -> Abs (params, substituteDefinitions body definitions)
-    | App (t1, t2) -> App (substituteDefinitions t1 definitions, substituteDefinitions t2 definitions)   
+        | Some expr -> 
+            Some { Definitions = definitions.Value; MainExpression = expr }
+        | None ->
+            printfn "Не найдено основное выражение"
+            None
