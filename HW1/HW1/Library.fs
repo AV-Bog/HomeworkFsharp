@@ -15,12 +15,11 @@ let generatePowersOfTwo n m =
         let rec loop count currentPower acc =
             match count with
             | 0 -> 
-                Ok (currentPower :: acc)
+                Ok (List.rev (currentPower :: acc))
             | _ -> 
                 loop (count - 1) (currentPower * 2.0) (currentPower :: acc)
         
         loop m (2.0 ** float n) []
-
 let firstOccurrence x list =
     let rec recFirst acc list =
         match list with

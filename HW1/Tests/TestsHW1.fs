@@ -15,28 +15,41 @@ let ``Factorial of 20 should be large number`` () =
 
 [<Test>]
 let ``generatePowersOfTwo 0 0 should return single element`` () =
-    generatePowersOfTwo 0 0 |> should equal (Ok [1.0])
+    match generatePowersOfTwo 0 0 with
+    | Ok result -> result |> should equal [1.0]
+    | Error _ -> Assert.Fail "Expected Ok, got Error"
 
 [<Test>]
 let ``generatePowersOfTwo 0 5 should start from 1`` () =
-    generatePowersOfTwo 0 5 |> should equal (Ok [1.0; 2.0; 4.0; 8.0; 16.0; 32.0])
+    match generatePowersOfTwo 0 5 with
+    | Ok result -> result |> should equal [1.0; 2.0; 4.0; 8.0; 16.0; 32.0]
+    | Error _ -> Assert.Fail "Expected Ok, got Error"
 
 [<Test>]
 let ``generatePowersOfTwo 3 4 should return powers from 8 to 128`` () =
-    generatePowersOfTwo 3 4 |> should equal (Ok [8.0; 16.0; 32.0; 64.0; 128.0])
+    match generatePowersOfTwo 3 4 with
+    | Ok result -> result |> should equal [8.0; 16.0; 32.0; 64.0; 128.0]
+    | Error _ -> Assert.Fail "Expected Ok, got Error"
 
 [<Test>]
 let ``generatePowersOfTwo 1 0 should return single element 2`` () =
-    generatePowersOfTwo 1 0 |> should equal (Ok [2.0])
+    match generatePowersOfTwo 1 0 with
+    | Ok result -> result |> should equal [2.0]
+    | Error _ -> Assert.Fail "Expected Ok, got Error"
 
 [<Test>]
 let ``generatePowersOfTwo -1 3 should handle negative n`` () =
-    generatePowersOfTwo -1 3 |> should equal (Ok [0.5; 1.0; 2.0; 4.0])
-
+    match generatePowersOfTwo -1 3 with
+    | Ok result -> result |> should equal [0.5; 1.0; 2.0; 4.0]
+    | Error _ -> Assert.Fail "Expected Ok, got Error"
+    
 [<Test>]
 let ``generatePowersOfTwo with negative m should return Error`` () =
-    generatePowersOfTwo 2 -3 |> should equal (Error "m не может быть отрицательным")
-    
+    match generatePowersOfTwo 2 -3 with
+    | Ok _ -> Assert.Fail "Expected Error, got Ok"
+    | Error msg -> msg |> should equal "m не может быть отрицательным"
+
+
 [<Test>]
 let ``firstOccurrence in empty list should be None`` () =
     firstOccurrence 5 [] |> should equal None
