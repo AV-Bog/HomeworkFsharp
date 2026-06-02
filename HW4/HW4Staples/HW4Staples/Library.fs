@@ -1,35 +1,25 @@
 ﻿namespace HW4Staples
 
-module Staples =
-    let onlyStaples (str : string)=
-        str
-        |> Seq.filter (fun c -> "()[]{}".Contains(c))
-        |> System.String.Concat
-    
+module Brackets =
     let isMatchingPair openBr closeBr =
         match openBr, closeBr with
         | '(', ')' | '[', ']' | '{', '}' -> true
         | _ -> false
         
-    let rec checkStack (stack: char list) (remaining: string) =
-        if System.String.IsNullOrEmpty(remaining) then
-            stack.IsEmpty
-        else
-            let current = remaining.[0]
-            let rest = remaining.Substring(1)
-            
+    let rec checkStack (stack: char list) (remaining: char list) =
+        match remaining with
+        | [] -> stack.IsEmpty
+        | current :: rest ->
             match current with
-            | '(' | '[' | '{' -> checkStack (current :: stack) rest
+            | '(' | '[' | '{' -> 
+                checkStack (current :: stack) rest
             | ')' | ']' | '}' ->
                 match stack with
-                | [] -> false 
-                | top :: restStack ->
-                    if isMatchingPair top current then
-                        checkStack restStack rest
-                    else
-                        false
+                | top :: restStack when isMatchingPair top current ->
+                    checkStack restStack rest
+                | _ -> false
             | _ -> checkStack stack rest
     
     let public okStaples (str : string) =
-        let bracketsOnly = onlyStaples str
-        checkStack [] bracketsOnly
+        let charList = str |> List.ofSeq
+        checkStack [] charList
