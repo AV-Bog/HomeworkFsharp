@@ -9,15 +9,17 @@ let factorial x : bigint =
         recFactorial x 1I
         
 let generatePowersOfTwo n m =
-    let rec loop acc count result =
-        if count > m then 
-            List.rev result
-        else
-            let newAcc = if count = 0 then acc else acc * 2.0
-            loop newAcc (count + 1) (newAcc :: result)
-    
-    let startValue = 2.0 ** float n
-    loop startValue 0 []
+    if m < 0 then 
+        Error "m не может быть отрицательным"
+    else
+        let rec loop count currentPower acc =
+            match count with
+            | 0 -> 
+                Ok (currentPower :: acc)
+            | _ -> 
+                loop (count - 1) (currentPower * 2.0) (currentPower :: acc)
+        
+        loop m (2.0 ** float n) []
 
 let firstOccurrence x list =
     let rec recFirst acc list =
