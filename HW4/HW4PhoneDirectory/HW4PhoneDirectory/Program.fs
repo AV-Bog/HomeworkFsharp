@@ -7,12 +7,12 @@ let main argv =
     
     let initialBook = 
         match loadFromFile "phonebook.dat" with
-        | Success book -> 
-            printfn "Загружено %d записей из phonebook.dat" (recordCount book)
+        | Ok book ->
+            printfn $"Загружено %d{recordCount book} записей из phonebook.dat"
             book
-        | Error msg -> 
-            printfn "%s (начинаем с пустого справочника)" msg
-            []
+        | Error msg ->
+            printfn $"%s{msg} (начинаем с пустого справочника)"
+            PhoneBook []
     
     mainLoop initialBook
     0

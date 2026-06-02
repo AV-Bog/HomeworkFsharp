@@ -10,73 +10,75 @@ type Record = {
     Phone: Phone
 }
 
-type PhoneBook = Record list
+type PhoneBook = PhoneBook of Record list
 
-type OperationResult<'T> = 
-    | Success of 'T
-    | Error of string
+let private getRecords (PhoneBook records) = records
+let private createPhoneBook records = PhoneBook records
 
-let addRecord (name: string) (phone: string) (book: PhoneBook) : OperationResult<PhoneBook> =
+let addRecord (name: string) (phone: string) (book: PhoneBook) : Result<PhoneBook, string> =
+    let records = getRecords book
+    
     if name.Trim() = "" then
         Error "Имя не может быть пустым"
     elif phone.Trim() = "" then
         Error "Телефон не может быть пустым"
-    elif book |> List.exists (fun r -> r.Name = Name name) then
+    elif records |> List.exists (fun r -> r.Name = Name name) then
         Error $"Контакт '{name}' уже существует"
     else
         let newRecord = { Name = Name name; Phone = Phone phone }
-        Success (newRecord :: book)
+        createPhoneBook (newRecord :: records) |> Ok
 
-let findPhoneByName (name: string) (book: PhoneBook) : OperationResult<string> =
-    match book |> List.tryFind (fun r -> r.Name = Name name) with
-    | Some record -> 
+let findPhoneByName (name: string) (book: PhoneBook) : string option =
+    let records = getRecords book
+    records |> List.tryFind (fun r -> r.Name = Name name)
+    |> Option.map (fun record -> 
         let (Phone phone) = record.Phone
-        Success phone
-    | None -> 
-    Error $"Контакт '{name}' не найден"
+        phone
+    )
 
-let findNameByPhone (phone: string) (book: PhoneBook) : OperationResult<string> =
-    match book |> List.tryFind (fun r -> r.Phone = Phone phone) with
-    | Some record -> 
+let findNameByPhone (phone: string) (book: PhoneBook) : string option =
+    let records = getRecords book
+    records |> List.tryFind (fun r -> r.Phone = Phone phone)
+    |> Option.map (fun record -> 
         let (Name name) = record.Name
-        Success name
-    | None -> 
-        Error $"Телефон '{phone}' не найден"
+        name
+    )
 
-let getAllRecords (book: PhoneBook) : Record list = book
+let getAllRecords (PhoneBook records) : Record list = records
 
-let recordCount (book: PhoneBook) : int = List.length book
+let recordCount (PhoneBook records) : int = List.length records
 
 let private serializeRecord ({ Name = Name name; Phone = Phone phone }: Record) : string = $"{name}|{phone}"
 
-let private deserializeRecord (line: string) : OperationResult<Record> =
-    let parts = line.Split('|')
-    if parts.Length <> 2 then
+let private deserializeRecord (line: string) : Result<Record, string> =
+    match line.Split('|') with
+    | [| name; phone |] ->
+        Ok { Name = Name name; Phone = Phone phone }
+    | _ ->
         Error $"Неверный формат строки: {line}"
-    else
-        Success { Name = Name parts[0]; Phone = Phone parts[1] }
 
-let saveToFile (filePath: string) (book: PhoneBook) : OperationResult<unit> =
+let saveToFile (filePath: string) (PhoneBook records) : Result<unit, string> =
     try
-        let content = book |> List.map serializeRecord |> String.concat "\n"
+        let content = records |> List.map serializeRecord |> String.concat "\n"
         File.WriteAllText(filePath, content)
-        Success ()
+        Ok ()
     with
     | ex -> Error $"Ошибка записи файла: {ex.Message}"
 
-let loadFromFile (filePath: string) : OperationResult<PhoneBook> =
+let loadFromFile (filePath: string) : Result<PhoneBook, string> =
     if not (File.Exists(filePath)) then
-        Success []
+        Ok (PhoneBook [])
     else
         try
             let lines = File.ReadAllLines(filePath)
-            let results = lines |> Array.map deserializeRecord
+            let results = lines |> Array.map deserializeRecord |> Array.toList
             
-            if results |> Array.exists (function Error _ -> true | _ -> false) then
-                let errors = results |> Array.choose (function Error e -> Some e | _ -> None)
+            let errors = results |> List.choose (function Error e -> Some e | _ -> None)
+            let records = results |> List.choose (function Ok r -> Some r | _ -> None)
+            
+            if List.length errors > 0 then
                 Error (sprintf "Ошибки парсинга: %s" (String.concat "; " errors))
             else
-                let records = results |> Array.choose (function Success r -> Some r | _ -> None)
-                Success (List.ofArray records)
+                Ok (PhoneBook records)
         with
-            | ex -> Error $"Ошибка чтения файла: {ex.Message}"
+        | ex -> Error $"Ошибка чтения файла: {ex.Message}"
