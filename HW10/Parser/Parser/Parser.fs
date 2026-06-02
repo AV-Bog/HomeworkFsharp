@@ -16,24 +16,34 @@ type Definition = {
     Body: Term
 }
 
+type ExpressionResult = {
+    Expression: Term
+    Result: obj option
+}
+
+type ParseResult = {
+    Definitions: Map<string, Term>
+    Expressions: ExpressionResult list
+}
+
 let ws = spaces
 let str s = pstring s .>> ws
 
 let identifier : Parser<string, unit> =
-    let isFirstChar c = isLetter c && Char.IsLower(c)
+    let isFirstChar c = isLetter c
     let isOtherChar c = isLetter c || isDigit c
     (many1Satisfy2L isFirstChar isOtherChar "identifier") .>> ws
 
 let var = identifier |>> Var
 
-let parametrs : Parser<string List, unit> =
+let parameters : Parser<string list, unit> =
     many1 identifier
 
 let term, termRef = createParserForwardedToRef<Term, unit>()
 
 let termPrime : Parser<Term, unit> =
     choice [
-        str "\\" >>. parametrs .>> str "." .>>. term |>> Abs;
+        str "\\" >>. parameters .>> str "." .>>. term |>> Abs;
         var;
         between (str "(") (str ")") term
     ]
@@ -52,15 +62,10 @@ let letDefinition : Parser<Definition, unit> =
     str "let" >>. identifier .>> str "=" .>>. term
     |>> (fun (name, value) -> { Name = name; Body = value })
 
-type ParseResult = {
-    Definitions: Map<string, Term>
-    MainExpression: Term
-}
-
 let parseInput (input: string) : ParseResult option =
     let lines = input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
     let definitions = ref Map.empty
-    let mutable mainExpr = None
+    let expressions = ref []
     let mutable errorMsg = None
     
     for line in lines do
@@ -73,10 +78,7 @@ let parseInput (input: string) : ParseResult option =
                 | _ ->
                     match run (term .>> ws .>> eof) trimmed with
                     | Success(expr, _, _) ->
-                        if mainExpr.IsNone then
-                            mainExpr <- Some expr
-                        else
-                            errorMsg <- Some "Несколько основных выражений"
+                        expressions.Value <- expressions.Value @ [{ Expression = expr; Result = None }]
                     | Failure(err, _, _) ->
                         errorMsg <- Some $"Ошибка парсинга: {err}"
     
@@ -85,9 +87,9 @@ let parseInput (input: string) : ParseResult option =
         printfn "%s" msg
         None
     | None ->
-        match mainExpr with
-        | Some expr -> 
-            Some { Definitions = definitions.Value; MainExpression = expr }
-        | None ->
-            printfn "Не найдено основное выражение"
+        match expressions.Value with
+        | [] -> 
+            printfn "Не найдено ни одного выражения"
             None
+        | exprs -> 
+            Some { Definitions = definitions.Value; Expressions = exprs }

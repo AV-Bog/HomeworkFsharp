@@ -44,18 +44,30 @@ let main argv =
                     printfn "  %s = %s" kv.Key (toString kv.Value)
                 printfn ""
             
-            printfn "Основное выражение: %s" (toString parseResult.MainExpression)
+            printfn "Найдено выражений: %d" parseResult.Expressions.Length
             printfn ""
             printfn "---"
             printfn ""
             
-            let substituted = substituteDefinitions parseResult.MainExpression parseResult.Definitions
+            // Обрабатываем каждое выражение
+            let mutable hasError = false
+            for i, exprResult in Seq.indexed parseResult.Expressions do
+                printfn "Выражение %d: %s" (i + 1) (toString exprResult.Expression)
+                printfn ""
+                
+                let substituted = substituteDefinitions exprResult.Expression parseResult.Definitions
+                
+                match normalize 1000 substituted with
+                | Some normalized ->
+                    printfn "Результат %d: %s" (i + 1) (toString normalized)
+                | None ->
+                    printfn "ПРЕДУПРЕЖДЕНИЕ: Достигнут лимит шагов редукции для выражения %d" (i + 1)
+                    printfn "Результат %d (не до конца нормализован): %s" (i + 1) (toString substituted)
+                    hasError <- true
+                
+                printfn ""
+                if i < parseResult.Expressions.Length - 1 then
+                    printfn "---"
+                    printfn ""
             
-            match normalize 1000 substituted with
-            | Some normalized ->
-                printfn "Результат: %s" (toString normalized)
-                0
-            | None ->
-                printfn "ПРЕДУПРЕЖДЕНИЕ: Достигнут лимит шагов редукции"
-                printfn "Результат (не до конца нормализован): %s" (toString substituted)
-                0
+            if hasError then 1 else 0
