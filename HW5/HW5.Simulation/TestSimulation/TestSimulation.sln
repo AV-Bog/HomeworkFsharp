@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TestSimulation", "TestSimulation\TestSimulation.fsproj", "{A0163CB6-A5A6-4C67-B5E0-2C8AB54EF406}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HW5.Simulation", "..\HW5.Simulation\HW5.Simulation.fsproj", "{97C53EA3-1C03-4684-9781-0FEE6A28BB09}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests\Tests.fsproj", "{B085C583-311C-49C9-A5F6-C187E514D59E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,13 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A0163CB6-A5A6-4C67-B5E0-2C8AB54EF406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0163CB6-A5A6-4C67-B5E0-2C8AB54EF406}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0163CB6-A5A6-4C67-B5E0-2C8AB54EF406}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0163CB6-A5A6-4C67-B5E0-2C8AB54EF406}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97C53EA3-1C03-4684-9781-0FEE6A28BB09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97C53EA3-1C03-4684-9781-0FEE6A28BB09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97C53EA3-1C03-4684-9781-0FEE6A28BB09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97C53EA3-1C03-4684-9781-0FEE6A28BB09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B085C583-311C-49C9-A5F6-C187E514D59E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B085C583-311C-49C9-A5F6-C187E514D59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B085C583-311C-49C9-A5F6-C187E514D59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B085C583-311C-49C9-A5F6-C187E514D59E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
