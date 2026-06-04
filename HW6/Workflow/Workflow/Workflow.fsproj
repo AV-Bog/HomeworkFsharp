@@ -5,7 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Calculats.fs" />
+        <Compile Include="Calculator.fs" />
+        <Compile Include="RoundingBuilder.fs" />
     </ItemGroup>
 
 </Project>
