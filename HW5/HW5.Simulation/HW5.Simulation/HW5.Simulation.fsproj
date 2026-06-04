@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Comp.fs" />
+        <Compile Include="Virus.fs" />
+        <Compile Include="SimulationResult.fs" />
+        <Compile Include="Network.fs" />
+    </ItemGroup>
+
+</Project>
